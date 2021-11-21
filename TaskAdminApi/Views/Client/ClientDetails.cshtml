@@ -1,0 +1,30 @@
+﻿@model TaskAdminApi.Models.Client
+@using TaskAdminApi.Models
+@{
+    ViewBag.Title = Model.Client_Name;
+}
+
+<table class="table">
+
+    <tr><td>Наименование клиента:</td><td>Юридический адрес:</td><td>Физический адрес:</td><td>Контактное лицо:</td><td>Телефонный номер:</td><td>E-mail:</td></tr>
+
+    <tr>
+        <td>@Model.Client_Name</td>
+        
+        <td>@Model.Client_Contact_Person </td>
+        <td>@Model.Client_Contact_Phone </td>
+        <td>@Model.Client_Contact_Email </td>
+
+        <td>
+            <ul>
+                @foreach (var c in Model.Services)
+                {
+
+                    <li>@c.Service_Name</li>
+
+                }
+            </ul>
+        </td>
+    </tr>
+
+</table>

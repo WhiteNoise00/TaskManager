@@ -1,0 +1,25 @@
+﻿@model TaskAdminApi.Models.Client
+@using TaskAdminApi.Models
+@{
+    ViewData["Title"] = "ClientDelete";
+}
+
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>Наименование удаляемого клиента:</dt>
+        <dd>
+            @Html.DisplayFor(model => model.Client_Name)
+        </dd>
+
+
+    </dl>
+</div>
+
+<div>
+    <form asp-controller="Client" asp-action="ClientDelete" method="post">
+        <div class="form-group">
+            <input type="submit" value="Удалить" />
+        </div>
+    </form>
+</div>

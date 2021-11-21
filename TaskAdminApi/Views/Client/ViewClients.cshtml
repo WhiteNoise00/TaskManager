@@ -1,0 +1,68 @@
+﻿@model IEnumerable<TaskAdminApi.Models.Client>
+@using TaskAdminApi.Models
+@{
+    ViewBag.Title = "Все клиенты";
+
+}
+<form method="get">
+    <div class="form-inline form-group">
+        <label class="control-label">Клиент: </label>
+        <input name="name" class="form-control" />
+        <label class="control-label">Услуги: </label>
+        <select name="id" asp-items="@ViewBag.ServiceList" class="form-control"></select>
+        <input type="submit" value="Найти" />
+    </div>
+</form>
+
+<table class="table">
+    <tr><td>Клиент:</td><td>Контактное лицо:</td><td>Контактный телефон:</td><td>Почта:</td><td>Список услуг:</td><td>Статус выполненения:</td><td>Статус оплаты:</td><td>Действия:</td></tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Client_Name</td>
+
+            <td>@item.Client_Contact_Person</td>
+            <td>@item.Client_Contact_Phone</td>
+            <td>@item.Client_Contact_Email</td>
+            <td>
+                <ul>
+                    @foreach (var i in item.Services)
+                    {
+                        <li>@i.Service_Name</li>
+                    }
+                </ul>
+            </td>
+            <td>Не совсем корректное представление таблицы</td>
+            <td>У нас несколько услуг и для каждой потребуются статусы</td>
+
+            <td>
+
+                <a asp-action="ClientEdit" asp-controller="client" asp-route-id="@item.Id">Изменить</a> |
+                <a asp-action="ClientDelete" asp-controller="client" asp-route-id="@item.Id">Удалить</a>|
+                <a asp-action="ClientDetails" asp-controller="client" asp-route-id="@item.Id">Детали</a>
+
+            </td>
+
+        </tr>
+    }
+</table>
+@*
+    @if (Model.PageViewModel.HasPreviousPage)
+    {
+        <a asp-action="ViewEmployees"
+           asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+           class="btn btn-outline-dark">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Назад
+        </a>
+    }
+    @if (Model.PageViewModel.HasNextPage)
+    {
+        <a asp-action="ViewEmployees"
+           asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+           class="btn btn-outline-dark">
+            Вперед
+            <i class="glyphicon glyphicon-chevron-right"></i>
+        </a>
+    }
+*@
