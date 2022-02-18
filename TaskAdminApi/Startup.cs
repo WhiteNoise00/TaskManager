@@ -1,3 +1,5 @@
+using DBRepository;
+using DBRepository.MSSQLRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -18,7 +20,6 @@ namespace TaskAdminApi
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -26,6 +27,7 @@ namespace TaskAdminApi
         {
             services.AddDbContext<TaskAdminContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IRepository, MSSQLRepository>();
 
             services.AddControllersWithViews();
         }

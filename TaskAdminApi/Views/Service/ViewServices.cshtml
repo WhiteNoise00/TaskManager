@@ -1,5 +1,6 @@
 ﻿
-@model IEnumerable<TaskAdminApi.Models.Service>
+@model IndexViewModel
+@using TaskAdminApi.Models
 
 @{
     ViewBag.Title = "Все услуги";
@@ -7,71 +8,58 @@
 }
 
 
-<table class="table">
-    <tr><td>Услуга:</td><td>Статус выполнения:</td><td>Статус оплаты:</td><td>Затраченное время:</td><td>Действия:</td></tr>
-    @foreach (var item in Model)
+<table class="table table-striped table-bordered">
+    <tr>
+        <th>Услуга:</th>
+        <th>Опсиание:</th>
+        <th>Используют клиенты:</th>
+        <th>Действия:</th>
+    </tr>
+    @foreach (var item in Model.Services)
     {
 
-<tr>
+     <tr>
     <td>@item.Service_Name</td>
-    @if (@item.Service_Status_Complete == true)
-    {
-        <td> выполнено</td>
-    }
-    else
-    {
-        <td> не выполнено</td>
-    }
+    <td>@item.Service_Description</td>
+     <td>
+         <ul>
+             @foreach (var c in item.Clients)
+             {
 
-    @if (@item.Service_Status_Pay == true)
-    {
-        <td> оплачено</td>
-    }
-    else
-    {
-        <td> не оплачено</td>
-    }
+                
+                 <li><a asp-action="ClientDetails" asp-controller="client" asp-route-id="@c.Id">@c.Client_Name</a></li>
 
-
-    @if (@item.Service_Time_Type_Hours == true)
-    {
-        <td>@item.Service_Time_Hours час</td>
-    }
-    else
-    {
-        <td>@item.Service_Time_Minutes минуты</td>
-    }
-
-
-
+             }
+         </ul>
+        </td>
+    
     <td>
 
         <a asp-action="ServiceEdit" asp-controller="service" asp-route-id="@item.Id">Изменить</a> |
         <a asp-action="ServiceDelete" asp-controller="service" asp-route-id="@item.Id">Удалить</a>|
-        <a asp-action="ServiceDetails" asp-controller="service" asp-route-id="@item.Id">Детали</a>
 
     </td>
 
 </tr>
     }
 </table>
-@*
-    @if (Model.PageViewModel.HasPreviousPage)
-    {
-        <a asp-action="ViewEmployees"
-           asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
-           class="btn btn-outline-dark">
-            <i class="glyphicon glyphicon-chevron-left"></i>
-            Назад
-        </a>
-    }
-    @if (Model.PageViewModel.HasNextPage)
-    {
-        <a asp-action="ViewEmployees"
-           asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
-           class="btn btn-outline-dark">
-            Вперед
-            <i class="glyphicon glyphicon-chevron-right"></i>
-        </a>
-    }
-*@
+
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="ViewServices"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Назад
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="ViewServices"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
+

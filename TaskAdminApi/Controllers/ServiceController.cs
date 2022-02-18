@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DBRepository;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,40 +11,38 @@ namespace TaskAdminApi.Controllers
 {
     public class ServiceController : Controller
     {
-       
+        private readonly IRepository db;
 
-        private TaskAdminContext db;
-        public ServiceController(TaskAdminContext context)
+        public ServiceController(IRepository context)
         {
             db = context;
         }
 
-        public IActionResult ViewServices()
+        public async Task<IActionResult> ViewServices(int page = 1)
         {
-            var services = db.Services.ToList();
-            return View(services);
-        }
+            var services = db.GetServicesListForPage(page);
+            int pageSize = 5;
+            var count =  services.Count();
+            var items =await services.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            IndexViewModel viewModel = new IndexViewModel
+            {
+                PageViewModel = pageViewModel,
+                Services = items
+            };
+
+            if (services != null)
+            {
+                return View(viewModel);
+            }
+            else
+            { return NotFound(); }
+        }
+ 
         [Route("Service/CreateService")]
         public async Task<IActionResult> CreateService()
         {
-            // var positionsValue = await db.Positions.ToListAsync();
-            /* var ServicesValue = await db.Services.ToListAsync();
-             if (ServicesValue != null)
-             {
-                 //List<Position> pos = await db.Positions.ToListAsync();
-                 List<Service> serv = ServicesValue;
-                 SelectList services = new SelectList(serv, "Id", "Service_Name");
-                 ViewBag.ServiceList = services;
-                 return View();
-             }
-             else
-             {
-                 return NotFound();
-             }*/
-
-            //здесь я должна отментить состояние checkbox
-
             return View();
         }
 
@@ -51,49 +50,21 @@ namespace TaskAdminApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateService(Service serv, bool selectedTime)
         {
-            if (selectedTime ==true)
-            {
-                serv.Service_Time_Type_Minutes = true;
-            }
-            else
-            {
-                serv.Service_Time_Type_Hours = true;
-            }
-            
             if (ModelState.IsValid)
-            {              
-                db.Services.Add(serv);
-                db.SaveChanges();
+            {
+                db.CreateService(serv, selectedTime);
                 return RedirectToAction("ViewServices");
             }
-
             return View();
         }
-
-        [Route("Service/ServiceDetails/{id?}")]
-        public async Task<IActionResult> ServiceDetails(int? id)
-        {
-            if (id != null)
-            {
-                Service serv = await db.Services.Include(e => e.Clients).FirstOrDefaultAsync(e => e.Id == id);
-                if (serv != null)
-                {
-                    return View(serv);
-                }
-            }
-            return NotFound();
-        }
-
 
         [HttpGet]
         [Route("Service/ServiceEdit")]
         public async Task<IActionResult> ServiceEdit(int? id)
         {
-            //Думаю, что добавление услуги лучше пока сделать только из страницы клиента, чтобы не было путаницы
             if (id != null)
             {
-                Service serv = await db.Services.Include(e => e.Clients).FirstOrDefaultAsync(e => e.Id == id);
-             
+                Service serv = db.GetServiceWithClients(id.Value);
                 return View(serv);
             }
             return NotFound();
@@ -104,24 +75,22 @@ namespace TaskAdminApi.Controllers
         [HttpPost]
         public async Task<IActionResult> ServiceEdit(Service serv)
         {
-            Service service = await db.Services.FirstOrDefaultAsync(e => e.Id == serv.Id);
-
+            Service service = db.EditPostService(serv);
             service.Service_Name = serv.Service_Name;
-            service.Service_Description = serv.Service_Description;                  
+            service.Service_Description = serv.Service_Description;
+            service.Service_Time_Type_Minutes = serv.Service_Time_Type_Minutes;
+            service.Service_Time_Type_Hours = serv.Service_Time_Type_Hours;
 
             if (ModelState.IsValid)
             {
-                db.Services.Update(service);
-                await db.SaveChangesAsync();
+                db.UpdateService(service);
                 return RedirectToAction("ViewServices");
             }
-
             else
             {                
                 return View(service);
             }
         }
-
 
         [Route("Service/ServiceDelete/{id?}")]
         [HttpGet]
@@ -130,9 +99,9 @@ namespace TaskAdminApi.Controllers
         {
             if (id != null)
             {
-                Service serv = await db.Services.FirstOrDefaultAsync(p => p.Id == id);
+                Service serv = db.GetService(id.Value);
                 if (serv != null)
-                    return View(serv);
+                return View(serv);
             }
             return NotFound();
         }
@@ -143,9 +112,7 @@ namespace TaskAdminApi.Controllers
         {
             if (id != null)
             {
-                Service serv = new Service { Id = id.Value };
-                db.Entry(serv).State = EntityState.Deleted;
-                await db.SaveChangesAsync();
+                db.DeleteService(id.Value);
                 return RedirectToAction("ViewServices");
             }
             return NotFound();

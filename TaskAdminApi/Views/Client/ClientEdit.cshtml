@@ -5,41 +5,36 @@
 }
 <form asp-action="ClientEdit" asp-controller="client" asp-route-id="@Model.Id">
     <div class="form-group">
-        <label asp-for="Client_Name" class="control-label"></label>
+        <label asp-for="Client_Name" class="control-label p-2"></label>
         <input type="text" asp-for="Client_Name" class="form-control" />
         <span asp-validation-for="Client_Name" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Client_Contact_Person" class="control-label"></label>
+        <label asp-for="Client_Contact_Person" class="control-label p-2"></label>
         <input type="text" asp-for="Client_Contact_Person" class="form-control" />
         <span asp-validation-for="Client_Contact_Person" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Client_Contact_Phone" class="control-label"></label>
+        <label asp-for="Client_Contact_Phone" class="control-label p-1"></label>
         <input type="tel" asp-for="Client_Contact_Phone" class="form-control" />
         <span asp-validation-for="Client_Contact_Phone" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Client_Contact_Email" class="control-label"></label>
+        <label asp-for="Client_Contact_Email" class="control-label p-1"></label>
         <input type="tel" asp-for="Client_Contact_Email" class="form-control" />
         <span asp-validation-for="Client_Contact_Email" class="text-danger"></span>
     </div>
-
-    @*Сделать в виде таблицы/ услуга, время статус оплаты и статус выполнения*@
-    <div class="editor-label"><b>Выбор задач:</b></div>
+   
+    <div class="editor-label p-1"><b>Выбор задач:</b></div>
     @foreach (var t in ViewBag.Services)
     {
         <input type="checkbox" name="selectedServices" value="@t.Id"
                @(Model.Services.Contains(t) ? "checked=\"checked\"" : "") /> @t.Service_Name <br />
-        }
-
-
-    <div class="form-group">
-        <input type="submit" value="Сохранить" />
+     }
+    <div class="form-group p-1">
+        <input  class="btn btn-outline-dark" type="submit" value="Сохранить" />
     </div>
-
-
 </form>

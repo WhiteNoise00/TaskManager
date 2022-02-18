@@ -1,0 +1,65 @@
+﻿
+@model TaskAdminApi.Models.ServicesForClient
+<div>
+        <dl class="dl-horizontal">
+            <dt class="text-black h3">
+                @ViewBag.Name (@Model.Client.Client_Name)
+            </dt>
+        </dl>
+    </div>
+<form asp-action="ServiceClientEdit" asp-controller="Client">
+    <input type="hidden" value="@Model.ServiceId" name="service_id" />
+    <input type="hidden" value="@Model.ClientId" name="client_id" />
+    <div>
+        <table class="table">
+            <tr>
+                <td>
+                    <label asp-for="Client_Service_Beginning_Date" class="control-label"></label>
+                </td>
+                <td>
+                    <input type="datetime" class="form-control" asp-for="Client_Service_Beginning_Date" />
+                </td>
+                <td>
+                    <span asp-validation-for="Client_Service_Beginning_Date" class="text-danger"></span>
+                </td>
+                <td>
+                    <label asp-for="Client_Service_Ending_Date" class="control-label"></label>
+                </td>
+                <td>
+                    <input type="datetime" class="form-control" asp-for="Client_Service_Ending_Date" />
+                </td>
+                <td>
+                    <span asp-validation-for="Client_Service_Ending_Date" class="text-danger"></span>
+                </td>
+                <td>
+                    <label asp-for="Service_Time_Hours" class="control-label"></label>
+                </td>
+                <td>
+                    <input type="text" class="form-control" asp-for="Service_Time_Hours" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Услуга оплачена:
+                </td>
+                <td>
+                    @Html.CheckBox("Service_Status_Pay", @Model.Service_Status_Pay)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Услуга выполнена:
+                </td>
+                <td>
+                    @Html.CheckBox("Service_Status_Complete", @Model.Service_Status_Complete)
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <input type="submit" class=" btn btn-outline-dark" value="Сохранить" />
+        <a asp-action="ServiceClientDelete" asp-controller="Client" asp-route-client_id="@Model.ClientId" asp-route-service_id="@Model.ServiceId">
+            <span class="btn btn-outline-dark">Удалить связку</span>
+        </a>
+    </div>
+</form>
