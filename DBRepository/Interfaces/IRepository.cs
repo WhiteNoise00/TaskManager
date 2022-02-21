@@ -15,8 +15,8 @@ namespace DBRepository
         void CreateClient(Client cl);
         IQueryable<Client> GetClientsListForPage(string name, int? id, int page = 1);       
         List<Client> GetClientsList();
-        Client GetClient(int id);      
-        Client GetClientWithServices(int id);
+        Task<Client> GetClient(int id);      
+        Task<Client> GetClientWithServices(int id);
         Client EditPostClient(Client cl, int[] selectedServices);
         void UpdateClient(Client client);        
         void DeleteClient(int? id);

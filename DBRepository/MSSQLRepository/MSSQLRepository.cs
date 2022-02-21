@@ -51,14 +51,14 @@ namespace DBRepository.MSSQLRepository
             return db.Clients.ToList();            
         }
        
-        public Client GetClient(int id)
+        public async Task<Client> GetClient(int id)
         {
-            return  db.Clients.FirstOrDefault(e => e.Id == id);
+            return await db.Clients.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public Client GetClientWithServices(int id)
+        public async Task<Client> GetClientWithServices(int id)
         {     
-            return db.Clients.Include(e => e.Services).FirstOrDefault(e => e.Id == id);
+            return await db.Clients.Include(e => e.Services).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public Client EditPostClient(Client cl, int[] selectedServices)

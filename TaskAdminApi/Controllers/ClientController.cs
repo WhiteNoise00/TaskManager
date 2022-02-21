@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TaskAdminApi.Models;
 using DBRepository;
-using DBRepository.MSSQLRepository;
 
 namespace TaskAdminApi.Controllers
 {
@@ -61,7 +60,7 @@ namespace TaskAdminApi.Controllers
         {
             if (id != null)
             {
-                Client cl = db.GetClientWithServices(id.Value);
+                Client cl = await db.GetClientWithServices(id.Value);
                 List<Service> serv = db.GetServicesList();
                 SelectList services = new SelectList(serv, "Id", "Service_Name");
                 ViewBag.ServicesList = services;
@@ -123,7 +122,7 @@ namespace TaskAdminApi.Controllers
         {
             if (id != null)
             {
-                Client cl =  db.GetClientWithServices(id.Value);
+                Client cl =  await db.GetClientWithServices(id.Value);
                 if (cl != null)
                 {
                     return View(cl);
@@ -181,21 +180,16 @@ namespace TaskAdminApi.Controllers
                 return RedirectToAction("ViewClients");
             }
             return NotFound();
-        }
-    
+        }    
 
-
-
-
-
-[Route("Client/ClientDelete/{id?}")]
+        [Route("Client/ClientDelete/{id?}")]
         [HttpGet]
         [ActionName("ClientDelete")]
         public async Task<IActionResult> ClientConfirmDelete(int? id)
         {
             if (id != null)
             {
-                Client cl = db.GetClient(id.Value);
+                Client cl = await db.GetClient(id.Value);
                 if (cl != null)
                 return View(cl);
             }

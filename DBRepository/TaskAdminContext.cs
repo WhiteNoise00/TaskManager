@@ -10,17 +10,9 @@ namespace TaskAdminApi
         public DbSet<Client> Clients { get; set; }
 
         public TaskAdminContext(DbContextOptions<TaskAdminContext> options) : base(options)
-       {
-            //наиболее приемлимый вариант реализации репозитория обозначен в статье от майкрософ
-        //засовываю строку подключения и конфигурацию Buildera (Code First) Startup.cs
-        //Но тогда и Context придется спрятать в проект web- приложения, ведь CodeFirst - штука только для ASP Net
-           //Database.EnsureDeleted();
-          //или понять, что я вообще хочу: сделать универсальный класс для люого типа приложения, или же для любого типа подключения
-           Database.EnsureCreated(); //придется убрать эту строку, так как я буду подключаться к базе данных через строку
-           //подключения, то бишь, мне еще придется создать миграцию
-           //Неверно. Придется оставить данную команду, т.к. при отсутствии БД она создаст ее по модели
-
-       }
+        {         
+           Database.EnsureCreated(); 
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {         
