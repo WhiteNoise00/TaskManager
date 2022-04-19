@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TaskAdminApi.Tests
 {
-    class ServiceControllerTest
+    public class ServiceControllerTest
     {
     }
 }

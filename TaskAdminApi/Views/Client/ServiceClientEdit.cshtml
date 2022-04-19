@@ -17,19 +17,13 @@
                     <label asp-for="Client_Service_Beginning_Date" class="control-label"></label>
                 </td>
                 <td>
-                    <input type="datetime" class="form-control" asp-for="Client_Service_Beginning_Date" />
-                </td>
-                <td>
-                    <span asp-validation-for="Client_Service_Beginning_Date" class="text-danger"></span>
+                    <input class="form-control" asp-for="Client_Service_Beginning_Date" asp-format="{0:yyyy-MM-ddTHH:mm}" />
                 </td>
                 <td>
                     <label asp-for="Client_Service_Ending_Date" class="control-label"></label>
                 </td>
                 <td>
-                    <input type="datetime" class="form-control" asp-for="Client_Service_Ending_Date" />
-                </td>
-                <td>
-                    <span asp-validation-for="Client_Service_Ending_Date" class="text-danger"></span>
+                    <input class="form-control" asp-for="Client_Service_Ending_Date" asp-format="{0:yyyy-MM-ddTHH:mm}" />
                 </td>
                 <td>
                     <label asp-for="Service_Time_Hours" class="control-label"></label>
