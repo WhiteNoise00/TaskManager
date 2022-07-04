@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskAdminApi", "TaskAdminAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBRepository", "DBRepository\DBRepository.csproj", "{D96F579B-12A6-49CB-9209-519640D112D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskAdminApi.Tests", "UnitTestApp.Tests\TaskAdminApi.Tests.csproj", "{29F6BB41-E593-4C01-8309-8B4E07F5FDBB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{D96F579B-12A6-49CB-9209-519640D112D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D96F579B-12A6-49CB-9209-519640D112D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D96F579B-12A6-49CB-9209-519640D112D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29F6BB41-E593-4C01-8309-8B4E07F5FDBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29F6BB41-E593-4C01-8309-8B4E07F5FDBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29F6BB41-E593-4C01-8309-8B4E07F5FDBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29F6BB41-E593-4C01-8309-8B4E07F5FDBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

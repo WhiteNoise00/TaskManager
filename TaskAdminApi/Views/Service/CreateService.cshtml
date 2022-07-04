@@ -1,5 +1,5 @@
 ﻿@model TaskAdminApi.Models.Service
-@using TaskAdminApi.Models
+
 @{
     ViewBag.Title = "Добавление новой услуги";
 }
@@ -15,9 +15,8 @@
         <span asp-validation-for="Service_Description" class="text-danger"></span>
     </div> 
     <div class="form-group p-1">
-        
         <input type="checkbox" name="selectedTime" value="true" />Исчислять время услуги в минутах <br />
-        </div>
+    </div>
         <div class="form-group p-1">
         <input class="btn btn-outline-dark" type="submit" value="Сохранить" />
     </div>

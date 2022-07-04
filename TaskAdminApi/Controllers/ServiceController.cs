@@ -1,4 +1,5 @@
 ﻿using DBRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,6 +10,7 @@ using TaskAdminApi.Models;
 
 namespace TaskAdminApi.Controllers
 {
+    [Authorize]
     public class ServiceController : Controller
     {
         private readonly IRepository db;
@@ -23,7 +25,7 @@ namespace TaskAdminApi.Controllers
             var services = db.GetServicesListForPage(page);
             int pageSize = 5;
             var count =  services.Count();
-            var items =await services.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var items = await services.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 
             PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
             IndexViewModel viewModel = new IndexViewModel
@@ -41,14 +43,14 @@ namespace TaskAdminApi.Controllers
         }
  
         [Route("Service/CreateService")]
-        public async Task<IActionResult> CreateService()
+        public IActionResult CreateService()
         {
             return View();
         }
 
         [Route("Service/CreateService")]
         [HttpPost]
-        public async Task<IActionResult> CreateService(Service serv, bool selectedTime)
+        public IActionResult CreateService(Service serv, bool selectedTime)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +66,7 @@ namespace TaskAdminApi.Controllers
         {
             if (id != null)
             {
-                Service serv = db.GetServiceWithClients(id.Value);
+                Service serv = await db.GetServiceWithClients(id.Value);
                 return View(serv);
             }
             return NotFound();
@@ -73,7 +75,7 @@ namespace TaskAdminApi.Controllers
 
         [Route("Service/ServiceEdit")]
         [HttpPost]
-        public async Task<IActionResult> ServiceEdit(Service serv)
+        public IActionResult ServiceEdit(Service serv)
         {
             Service service = db.EditPostService(serv);
             service.Service_Name = serv.Service_Name;
@@ -99,7 +101,7 @@ namespace TaskAdminApi.Controllers
         {
             if (id != null)
             {
-                Service serv = db.GetService(id.Value);
+                Service serv = await db.GetService(id.Value);
                 if (serv != null)
                 return View(serv);
             }

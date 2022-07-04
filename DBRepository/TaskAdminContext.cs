@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+
+using Microsoft.EntityFrameworkCore;
 using TaskAdminApi.Models;
 
 
@@ -6,12 +8,15 @@ namespace TaskAdminApi
 {
     public class TaskAdminContext : DbContext
     {
+        public DbSet<User> Users { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Client> Clients { get; set; }
 
         public TaskAdminContext(DbContextOptions<TaskAdminContext> options) : base(options)
-        {         
-           Database.EnsureCreated(); 
+        {
+          
+            //Database.EnsureDeleted();
+            Database.EnsureCreated(); 
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,6 +42,9 @@ namespace TaskAdminApi
                     j.HasKey(t => new { t.ClientId, t.ServiceId });
                     j.ToTable("ServicesForClient");
                 });
+
+            modelBuilder.Entity<User>()
+              .ToTable("Users").HasKey(p => p.Id);
 
         }
     }

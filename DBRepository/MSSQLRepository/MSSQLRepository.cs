@@ -20,8 +20,23 @@ namespace DBRepository.MSSQLRepository
             db = context;
         }
 
-        /*Функции для работы с обьектами типа "Клиент"*/
+        /*Авторизация*/
+        public async Task<User> GetUser(string email, string password)
+        {
+            return await db.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+        }
+        public async Task<User> GetUserForEmail(string email)
+        {
+            return await db.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+        public async Task AddNewUser(string email, string password)
+        {
+            db.Users.Add(new User { Email = email, Password = password });
+            await db.SaveChangesAsync();
+        }
 
+
+        /*Функции для работы с обьектами типа "Клиент"*/
         public IQueryable<Client> GetClientsListForPage(string name, int? id, int page = 1)
         {
             IQueryable<Client> clients = db.Clients.Include(t => t.Services).Include(s => s.ServicesForClients);
@@ -46,9 +61,9 @@ namespace DBRepository.MSSQLRepository
             } 
         }       
 
-        public List<Client> GetClientsList()
+        public async Task<List<Client>> GetClientsList()
         {
-            return db.Clients.ToList();            
+            return await db.Clients.ToListAsync();            
         }
        
         public async Task<Client> GetClient(int id)
@@ -108,19 +123,19 @@ namespace DBRepository.MSSQLRepository
             return db.Services.Include(t => t.Clients).Include(s => s.ServicesForClients);           
         }
 
-        public List<Service> GetServicesList()
+        public async Task<List<Service>> GetServicesList()
         {
-            return db.Services.ToList();
+            return await db.Services.ToListAsync();
         }
 
-        public Service GetService(int id)
+        public async Task<Service> GetService(int id)
         {
-            return db.Services.FirstOrDefault(e => e.Id == id);
+            return await db.Services.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public Service GetServiceWithClients(int id)
+        public async Task<Service> GetServiceWithClients(int id)
         {
-            return db.Services.Include(e => e.Clients).FirstOrDefault(e => e.Id == id);
+            return await db.Services.Include(e => e.Clients).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public void CreateService(Service serv, bool selectedTime)
@@ -143,7 +158,6 @@ namespace DBRepository.MSSQLRepository
             service.Service_Name = serv.Service_Name;
             service.Service_Description = serv.Service_Description;
             service.Service_Time_Type_Minutes = serv.Service_Time_Type_Minutes;
-            service.Service_Time_Type_Hours = serv.Service_Time_Type_Hours;
             return service;
         }
 
@@ -161,10 +175,12 @@ namespace DBRepository.MSSQLRepository
         }
 
         /*Функции для работы с обьектами  в промежуточной таблице(ServicesForClient)*/
-        public ServicesForClient ServiceClientGet(int? client_id, int? service_id)
+        public async Task<ServicesForClient> ServiceClientGet(int? client_id, int? service_id)
         {
-            Client client = db.Clients.Include(s => s.ServicesForClients).FirstOrDefault(s => s.Id == client_id);
-            Service service = db.Services.FirstOrDefault(c => c.Id == service_id);
+            Client client = await db.Clients.Include(s => s.ServicesForClients).FirstOrDefaultAsync(s => s.Id == client_id);
+            Service service = await db.Services.FirstOrDefaultAsync(c => c.Id == service_id);
+
+            bool time_type = service.Service_Time_Type_Minutes;
 
             if (client != null && service != null)
             {
@@ -177,23 +193,47 @@ namespace DBRepository.MSSQLRepository
         {
             Client client = db.Clients.Include(s => s.ServicesForClients).FirstOrDefault(s => s.Id == client_id);
             Service service = db.Services.FirstOrDefault(c => c.Id == service_id);
+            bool time_type = service.Service_Time_Type_Minutes;
 
             if (client != null && service != null)
             {
                 ServicesForClient srcl = client.ServicesForClients.FirstOrDefault(sc => sc.ServiceId == service.Id);
                 client.ServicesForClients.Remove(srcl);
 
+                DateTime date_beginning, date_ending;              
+
+                if (serv.Client_Service_Beginning_Date.ToString() == "01.01.0001 0:00:00")
+                {
+                    date_beginning = DateTime.Today; 
+                }
+                else 
+                { 
+                    date_beginning = serv.Client_Service_Beginning_Date;
+                }
+
+                if (serv.Client_Service_Ending_Date.ToString() == "01.01.0001 0:00:00")
+                {
+                   date_ending = date_beginning.AddDays(3);
+                }
+                else
+                {
+                    date_ending = serv.Client_Service_Ending_Date;
+                }
+
                 client.ServicesForClients.Add(new ServicesForClient
                 {
                     Service = service,
                     Service_Status_Complete = serv.Service_Status_Complete,
                     Service_Status_Pay = serv.Service_Status_Pay,
-                    Client_Service_Beginning_Date = serv.Client_Service_Beginning_Date,
-                    Client_Service_Ending_Date = serv.Client_Service_Ending_Date,
-                    Service_Time_Hours = serv.Service_Time_Hours
+                    Client_Service_Beginning_Date = date_beginning,
+                    Client_Service_Ending_Date = date_ending,
+                    Client_Service_Payment_Date = serv.Client_Service_Payment_Date,
+                    Service_Time_Type_Minutes = time_type,
+                    Service_Time = serv.Service_Time
                 }
-                );
-                db.SaveChanges();
+                ); 
+              
+            db.SaveChanges();
                 return srcl;
             }
             else { return null; }

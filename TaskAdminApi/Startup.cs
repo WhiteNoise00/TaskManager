@@ -12,6 +12,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.IdentityModel.Tokens;
+using TaskAdminApi.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace TaskAdminApi
 {
     public class Startup
@@ -25,6 +29,14 @@ namespace TaskAdminApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // установка конфигурации подключения
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => //CookieAuthenticationOptions
+                {
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                });
+            services.AddControllersWithViews();
+        
             services.AddDbContext<TaskAdminContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IRepository, MSSQLRepository>();
@@ -50,13 +62,14 @@ namespace TaskAdminApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=CLient}/{action=ViewClients}/{id?}");
+                     name: "default",
+                     pattern: "{controller=Account}/{action=Login}/{id?}");
             });
 
 

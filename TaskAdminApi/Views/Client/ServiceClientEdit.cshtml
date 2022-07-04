@@ -1,11 +1,11 @@
 ﻿
 @model TaskAdminApi.Models.ServicesForClient
 <div>
-        <dl class="dl-horizontal">
-            <dt class="text-black h3">
-                @ViewBag.Name (@Model.Client.Client_Name)
-            </dt>
-        </dl>
+    <dl class="dl-horizontal">
+        <dt class="text-black h3">
+            @ViewBag.Name (@Model.Client.Client_Name)
+        </dt>
+    </dl>
     </div>
 <form asp-action="ServiceClientEdit" asp-controller="Client">
     <input type="hidden" value="@Model.ServiceId" name="service_id" />
@@ -26,12 +26,31 @@
                     <input class="form-control" asp-for="Client_Service_Ending_Date" asp-format="{0:yyyy-MM-ddTHH:mm}" />
                 </td>
                 <td>
-                    <label asp-for="Service_Time_Hours" class="control-label"></label>
+                    <label asp-for="Client_Service_Payment_Date" class="control-label"></label>
                 </td>
                 <td>
-                    <input type="text" class="form-control" asp-for="Service_Time_Hours" />
+                    <input class="form-control" asp-for="Client_Service_Payment_Date" asp-format="{0:yyyy-MM-ddTHH:mm}"  />
                 </td>
-            </tr>
+                <td>
+                    <label asp-for="Service_Time" class="control-label"></label>
+                </td>
+                <td>
+                    @if (@ViewBag.Minutes == true)
+                    {
+                    <td>
+                        <input class="form-control" type="time" asp-for="Service_Time " asp-format="{0:mm}" />
+                        минуты
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <input class="form-control" type="time" asp-for="Service_Time " asp-format="{0:hh}" />
+                        час
+                    </td>
+                }
+                    </td>
+                </tr>
             <tr>
                 <td>
                     Услуга оплачена:
@@ -49,9 +68,6 @@
                 </td>
             </tr>
         </table>
-        <div class="editor-label">
-            <label asp-for="Client_Service_Beginning_Date" class="editor-label"></label>
-        </div>
     </div>
     <div>
         <input type="submit" class=" btn btn-outline-dark" value="Сохранить" />

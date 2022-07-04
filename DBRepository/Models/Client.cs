@@ -22,6 +22,7 @@ namespace TaskAdminApi.Models
         [Required(ErrorMessage = "Введите адрес электронной почты")]
         [Display(Name = "Адрес электронной почты:")]
         [StringLength(100)]
+        [DataType(DataType.EmailAddress)]
         public string Client_Contact_Email { get; set; }
 
         // Телефонный номер обратной связи    

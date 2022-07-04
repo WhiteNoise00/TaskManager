@@ -7,12 +7,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using TaskAdminApi.Models;
 using DBRepository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TaskAdminApi.Controllers
 {
+    [Authorize]
     public class ClientController : Controller
-    {       
-        private readonly IRepository db;    
+    {
+        private readonly IRepository db;
 
         public ClientController(IRepository context)
         {
@@ -21,13 +23,14 @@ namespace TaskAdminApi.Controllers
 
         public async  Task<IActionResult> GetClient(int id )
         {
-            var client = db.GetClient(id);
+            var client = await db.GetClient(id);
             return View(client);
         }
+
         public async Task<IActionResult> ViewClients(string name, int? id, int page = 1)
         {
-            var clients = db.GetClientsListForPage( name,  id, page);       
-            List<Service> service_values = db.GetServicesList();     
+            var clients = db.GetClientsListForPage(name, id, page);
+            List<Service> service_values = await db.GetServicesList();
             service_values.Insert(0, new Service { Service_Name = "Все", Id = 0 });
             SelectList services = new SelectList(service_values, "Id", "Service_Name");
             ViewBag.ServicesList = services;
@@ -50,7 +53,7 @@ namespace TaskAdminApi.Controllers
             else
             {
                 return NotFound();
-            }          
+            }
         }
 
         [HttpGet]
@@ -61,10 +64,10 @@ namespace TaskAdminApi.Controllers
             if (id != null)
             {
                 Client cl = await db.GetClientWithServices(id.Value);
-                List<Service> serv = db.GetServicesList();
+                List<Service> serv = await db.GetServicesList();
                 SelectList services = new SelectList(serv, "Id", "Service_Name");
                 ViewBag.ServicesList = services;
-                ViewBag.Services = db.GetServicesList();
+                ViewBag.Services = await db.GetServicesList();
                 return View(cl);
             }
             return NotFound();
@@ -83,7 +86,7 @@ namespace TaskAdminApi.Controllers
             }
             else
             {
-                ViewBag.Services = db.GetServicesList();
+                ViewBag.Services = await db.GetServicesList();
                 return View(client);
             }
         }
@@ -91,7 +94,7 @@ namespace TaskAdminApi.Controllers
         [Route("Client/CreateClient")]
         public async Task<IActionResult> CreateClient()
         {
-            var ServicesValue = db.GetServicesList();
+            var ServicesValue = await db.GetServicesList();
             if (ServicesValue != null)
             {
                 List<Service> serv = ServicesValue;
@@ -107,7 +110,7 @@ namespace TaskAdminApi.Controllers
 
         [Route("Client/CreateClient")]
         [HttpPost]
-        public async Task<IActionResult> CreateClient(Client cl)
+        public IActionResult CreateClient(Client cl)
         {
             if (ModelState.IsValid)
             {
@@ -136,9 +139,12 @@ namespace TaskAdminApi.Controllers
         public async Task<IActionResult> ServiceClientEdit(int? client_id, int? service_id, string service_name)
         {
             ViewBag.Name = service_name;
-            var serv = db.ServiceClientGet(client_id.Value, service_id.Value);
+            var service = await db.GetService(service_id.Value);
+            ViewBag.Minutes = service.Service_Time_Type_Minutes;
+
+            var serv = await db.ServiceClientGet(client_id.Value, service_id.Value);
             if (serv != null)
-            {
+            {              
                 return View(serv);
             }
             else { return NotFound(); }
@@ -146,7 +152,7 @@ namespace TaskAdminApi.Controllers
 
         [Route("Client/ServiceClientEdit")]
         [HttpPost]
-        public async Task<IActionResult> ServiceClientEdit(ServicesForClient serv, int client_id, int service_id)
+        public IActionResult ServiceClientEdit(ServicesForClient serv, int client_id, int service_id)
         {
             ServicesForClient servcl = db.ServiceClientEditPost(serv, client_id, service_id);
             if (servcl != null)
@@ -163,7 +169,7 @@ namespace TaskAdminApi.Controllers
         {
             if (client_id != null && service_id != null)
             {
-                var srcl = db.ServiceClientGet(client_id.Value, service_id.Value);
+                var srcl = await db.ServiceClientGet(client_id.Value, service_id.Value);
                 return View(srcl);
             }
             return NotFound();
@@ -172,7 +178,7 @@ namespace TaskAdminApi.Controllers
         [Route("Client/ServiceClientDelete")]
         [HttpPost]
         [ActionName("ServiceClientDelete")]
-        public async Task<IActionResult> ServiceClientDelete(int? client_id, int? service_id)
+        public IActionResult ServiceClientDelete(int? client_id, int? service_id)
         {
             if (client_id != null && service_id != null)
             {
@@ -199,7 +205,7 @@ namespace TaskAdminApi.Controllers
         [Route("Client/ClientDelete/{id?}")]
         [HttpPost]
         [ActionName("ClientDelete")]
-        public async Task<IActionResult> DeleteEntity(int? id)
+        public IActionResult DeleteEntity(int? id)
         {
             if (id != null)
             {

@@ -9,14 +9,14 @@ namespace TaskAdminApi.Models
         public int Id { get; set; }
 
         // Наименование услуги 
-        [Required(ErrorMessage = "Введите наименование услуги")]
+        [Required(ErrorMessage = "Введите наименование услуги:")]
         [StringLength(40)]
-        [Display(Name = "Наименование услуги")]
+        [Display(Name = "Наименование услуги:")]
         public string Service_Name { get; set; }
 
         // Описание услуги
         [StringLength(200)]
-        [Display(Name = "Описание услуги")]
+        [Display(Name = "Описание услуги:")]
         public string Service_Description { get; set; }
 
         // Исчислять затраченное время в минутах
